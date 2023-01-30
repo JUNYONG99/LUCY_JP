@@ -1,0 +1,74 @@
+{% load static %}
+  <header class="header">
+    <div class="header__top">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 col-md-7">
+                </div>
+                <div class="col-lg-6 col-md-5">
+                    <div class="header__top__right">
+                        <div class="header__top__nav">
+                            <ul class="navbar-nav ml-auto">
+                                {% if user.is_authenticated %}
+                                <li class="nav-item">
+                                 <a class="nav-link" href="{% url 'account:logout' %}">ログアウト</a>
+                                </li>
+                                {% else %}
+                                {% include 'base/modal_jp.html'%}
+                                <li class="nav-item">
+                                  <a class="nav-link" href="#" data-toggle="modal" data-target="#loginModal">ログイン</a>
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                        <div class="header__top__hover">
+                            <span>KOR <i class="arrow_carrot-down"></i></span>
+                            <ul>
+                                <li>
+                                    <a href="#"> KOR</a>
+                                </li>
+                                <li>
+                                    <a href="#">JPN</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3 col-md-3">
+                <div class="header__logo">
+                    <a href="/">LUCY</a>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6">
+                <nav class="header__menu mobile-menu">
+                    <ul>
+                        <li class="{% if current_page == 'landing' %}active{% endif %}"><a href="/">Home</a></li>
+                        <li class="{% if current_page == 'shop' %}active{% endif %}"><a href="{% url 'shop:shop_list' %}">Shop</a></li>
+                        <li class="{% if current_page == 'about' %}active{% endif %}"><a href="{% url 'single_pages:about' %}">About</a></li>
+                        <li class="{% if current_page == 'faq' %}active{% endif %}"><a href="{% url 'faq' %}">FAQs</a></li>
+                        <li class="{% if current_page == 'my' %}active{% endif %}"><a href="{% url 'account:profile' %}">My Account</a></li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="col-lg-3 col-md-3">
+                <div class="header__nav__option">
+                    {% if user.is_authenticated %}
+                    <a href="#" class="search-switch"><img src="{% static 'libs/img/icons/search.png' %}" alt=""></a>
+                    <a href="/shop/my_wish_list/"><img src="{% static 'libs/img/icons/heart.png' %}" alt=""></a>
+                    <a href="/shop/cart_list/"><img src="{% static 'libs/img/icons/cart.png' %}" alt=""></a>
+                    {% else %}
+                    <a href="#" class="search-switch"><img src="{% static 'libs/img/icons/search.png' %}" alt=""></a>
+                    <a href="{% url 'account:login' %}"><img src="{% static 'libs/img/icons/heart.png' %}" alt=""></a>
+                    <a href="{% url 'account:login' %}"><img src="{% static 'libs/img/icons/cart.png' %}" alt=""></a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="canvas__open"><i class="fa fa-bars"></i></div>
+    </div>
+</header>

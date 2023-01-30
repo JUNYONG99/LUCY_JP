@@ -1,0 +1,37 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block main_area %}
+    <div id="page-content">
+    	<div class="page section-header text-center mt-4">
+			<div class="page-title">
+        		<div class="wrapper"><h1 class="page-width">FAQs</h1></div>
+      		</div>
+		</div>
+        <div class="container">
+        	<div class="row">
+                <div class="col-12 col-sm-12 col-md-12 col-lg-12 main-col mb-5">
+                	<div class="accordion" id="accordion">
+                        {% if categories %}
+                            {% for cat in categories %}
+                            <h2 class="title h2"><i class="fa fa-leaf" aria-hidden="true"></i>
+                                &nbsp;&nbsp;</i>{{ cat }}</h2>
+                                {% for faq in faq_list %}
+                                    {% if faq.category == cat %}
+                                        <div class="faq-body">
+                                            <h4 class="panel-title" data-toggle="collapse" data-target="#collapse{{ faq.id }}" aria-expanded="false" aria-controls="collapse{{ faq.id }}">{{ faq.question }}</h4>
+                                            <div id="collapse{{ faq.id }}" class="collapse panel-content" data-parent="#accordion">{{ faq.answer | linebreaks }}</div>
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endfor %}
+                        {% else %}
+                        {% endif %}
+                    </div>
+               	</div>
+            </div>
+        </div>
+        
+    </div>
+</div>
+{% endblock %}

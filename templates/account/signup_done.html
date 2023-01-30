@@ -1,0 +1,13 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'libs/css/bootstrap.min.css' %}" type="text/css">
+<div class="row">
+    <div class="col-md-2"></div>
+        <div class="col-md-8 panel panel-default">
+            <br />
+            <div class="alert alert-info" style="text-align: center;">
+                회원가입 완료! 환영합니다. {{new_user.name}}님
+            </div>
+            <a class="btn btn-info" href="{% url 'account:login' %}">로그인</a>
+        </div>
+    <div class="col-md-2"></div>
+</div>

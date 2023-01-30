@@ -1,0 +1,172 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block index %}
+  <!-- Hero Section Begin -->
+  <section class="hero">
+    <div class="hero__slider owl-carousel">
+        <div class="hero__items set-bg mb-5" data-setbg="{% static 'libs/img/hero/main_banner1.jpg' %} " style="height: 500px;">
+            <div class="container">
+            </div>
+        </div>
+        <div class="hero__items set-bg" data-setbg="{% static 'libs/img/hero/main_banner2.jpg' %} " style="height: 500px;">
+            <div class="container">
+            </div>
+        </div>
+          
+    </div>
+</section>
+<!-- Hero Section End -->
+<!-- 人気ショップのおすすめアイテム Section Begin -->
+<section class="product spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 mt-2">
+                <ul class="filter__controls">
+                    <li class="active" data-filter="*">人気ショップのおすすめアイテム<hr /></li>
+                </ul>
+            </div>
+        </div>
+        <div class="" style="margin-left: 66rem;">
+            <a href="{% url 'shop:shop_list' %}"><span style="color: rgb(35, 171, 221);">すべて見る</span></a>
+        </div>
+        <div class="row product__filter mt-2">
+            {% if product_list %}
+            {% for product in product_list %}
+            <div class="col-lg-3 col-md-6 col-sm-6 col-md-6 col-sm-6 mix new-arrivals">
+                <div class="product__item">
+                    <div class="card">
+                        <a href="{{product.get_absolute_url}}">
+                            <img src="{{product.signature_img.url}}" alt="" width=600 height=260 >
+                         </a>
+                         <div class="card-body">
+                            <h6 class="card-title mt-2">{{product.title}}<br />
+                                <small class="text-muted">{{product.brand}}</small></h6>
+                                <div class="text-warning mr-2 mb-1">
+                                    {% if product.average_review %}
+                                        <div class="rating-star" >
+                                            <span style="margin-right: 0.5rem;">
+                                                <i class="fa fa-star{% if product.average_review < 0.5 %}-o{% elif product.average_review >= 0.5 and product.average_review < 1 %}-half-o{% endif %}"></i>
+                                                <i class="fa fa-star{% if product.average_review < 1.5 %}-o{% elif product.average_review >= 1.5 and product.average_review < 2 %}-half-o{% endif %}"></i>
+                                                <i class="fa fa-star{% if product.average_review < 2.5 %}-o{% elif product.average_review >= 2.5 and product.average_review < 3 %}-half-o{% endif %}"></i>
+                                                <i class="fa fa-star{% if product.average_review < 3.5 %}-o{% elif product.average_review >= 3.5 and product.average_review < 4 %}-half-o{% endif %}"></i>
+                                                <i class="fa fa-star{% if product.average_review < 4.5 %}-o{% elif product.average_review >= 4.5 and product.average_review < 5 %}-half-o{% endif %}"></i>
+                                            </span>
+                                            <span style="color: #787878;">({{ product.count_review }})</span>
+                                        </div>
+                                    {% else %}
+                                        <div class="rating-star">
+                                            <span style="margin-right: 0.5rem;">
+                                            <i class="fa fa-star-o"></i>
+                                            <i class="fa fa-star-o"></i>
+                                            <i class="fa fa-star-o"></i>
+                                            <i class="fa fa-star-o"></i>
+                                            <i class="fa fa-star-o"></i>
+                                            </span>
+                                            <span style="color: #787878;">({{ product.count_review }})</span>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            <h5 class="mb-3">¥{{ product.price | intcomma}}</h5>
+                         </div>
+                    </div>
+                 </div>
+             </div>
+             {% endfor %}
+             {% endif %}
+        </div>
+        <div class="row">
+            <div class="col-lg-12 mt-2">
+                <ul class="filter__controls">
+                    <li class="active" data-filter="*">新しいアイテム<hr /></li>
+                </ul>
+            </div>
+        </div>
+        <div class="" style="margin-left: 66rem;">
+            <a href="{% url 'shop:shop_list' %}"><span style="color: rgb(35, 171, 221);">すべて見る</span></a>
+        </div>
+        <div class="row product__filter mt-2">
+            {% if arrival_list %}
+            {% for product in arrival_list %}
+            <div class="col-lg-3 col-md-6 col-sm-6 col-md-6 col-sm-6 mix new-arrivals">
+                <div class="product__item">
+                    <div class="card">
+                        <a href="{{product.get_absolute_url}}">
+                            <img src="{{product.signature_img.url}}" alt="" width=600 height=260 >
+                         </a>
+                         <div class="card-body">
+                            <h6 class="card-title mt-2">{{product.title}}<br />
+                                <small class="text-muted">{{product.brand}}</small></h6>
+                                <div class="text-warning mr-2 mb-1">
+                                    {% if product.average_review %}
+                                        <div class="rating-star" >
+                                            <span style="margin-right: 0.5rem;">
+                                                <i class="fa fa-star{% if product.average_review < 0.5 %}-o{% elif product.average_review >= 0.5 and product.average_review < 1 %}-half-o{% endif %}"></i>
+                                                <i class="fa fa-star{% if product.average_review < 1.5 %}-o{% elif product.average_review >= 1.5 and product.average_review < 2 %}-half-o{% endif %}"></i>
+                                                <i class="fa fa-star{% if product.average_review < 2.5 %}-o{% elif product.average_review >= 2.5 and product.average_review < 3 %}-half-o{% endif %}"></i>
+                                                <i class="fa fa-star{% if product.average_review < 3.5 %}-o{% elif product.average_review >= 3.5 and product.average_review < 4 %}-half-o{% endif %}"></i>
+                                                <i class="fa fa-star{% if product.average_review < 4.5 %}-o{% elif product.average_review >= 4.5 and product.average_review < 5 %}-half-o{% endif %}"></i>
+                                            </span>
+                                            <span style="color: #787878;">({{ product.count_review }})</span>
+                                        </div>
+                                    {% else %}
+                                        <div class="rating-star">
+                                            <span style="margin-right: 0.5rem;">
+                                            <i class="fa fa-star-o"></i>
+                                            <i class="fa fa-star-o"></i>
+                                            <i class="fa fa-star-o"></i>
+                                            <i class="fa fa-star-o"></i>
+                                            <i class="fa fa-star-o"></i>
+                                            </span>
+                                            <span style="color: #787878;">({{ product.count_review }})</span>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            <h5 class="mb-3">¥{{ product.price | intcomma}}</h5>
+                         </div>
+                    </div>
+                 </div>
+             </div>
+             {% endfor %}
+             {% endif %}
+        </div>
+        <div class="row">
+            <div class="col-lg-12 mt-2">
+                <ul class="filter__controls">
+                    <li class="active" data-filter="*">ブランドリスト<hr /></li>
+                </ul>
+            </div>
+        </div>
+        <div class="row product__filter">
+            {% if brand_list %}
+            {% for brand in brand_list %}
+            <div class="col-lg-3 col-md-6 col-sm-6 col-md-6 col-sm-6 mix new-arrivals">
+                <div class="product__item">
+                    <div class="card" style="border-radius: 20px;">
+                        <a href="{{brand.get_absolute_url}}" style="color: #333;">
+                            {% if  brand.logo_img %}
+                                <img src="{{brand.logo_img.url}}" alt="" width=600 height=200 style="border-radius: 20px;">
+                            {% else %}
+                                <div class="card" style="width: 258x; height: 200px; border-radius: 20px;">
+                                    <span class="text-center" style="margin-top: 86px;">{{brand}}</span>
+                                </div>
+                            {% endif %}
+                         </a>
+                    </div>
+                 </div>
+             </div>
+             {% endfor %}
+             {% endif %}
+        </div> 
+    <hr />
+    <div class="row">
+        <div class="col-lg-12 mt-4">
+            <h3 class="font-weight-bold mb-4">LUCY (ルーシー) のご紹介</h3>
+            <span class="text-muted">LUCYではトップス・パンツ・ワンピースなど最新トレンドアイテムをオンラインでご購入いただけます<br />
+            ブランドの人気アイテムを取扱うファッション通販サイトです！</span>
+        </div>
+    </div>
+  </div>
+</section>
+<!-- Product BestSeller Section End -->
+{% endblock %}

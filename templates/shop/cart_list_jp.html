@@ -1,0 +1,246 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block main_area %}
+<script src="{% static 'libs/js/jquery-3.6.3.min.js' %}"></script>
+
+<div class="card mb-4">
+    <div class="card-body text-center">
+      <h4><i class="fa fa-shopping-cart mr-2"></i>ショッピングカート</h4>
+    </div>
+  </div>
+  {% include 'base/error.html' %}
+<div class="row cart_data">
+    <div class="col-md-8 mt-4 mb-4">
+        {% if cart_list %}
+        {% for my_cart in cart_list %}
+        <div class="media product_data">
+            {% csrf_token %}
+            <input type="hidden" value="{{my_cart.product.id}}" class="prod_id">
+            <a href="/shop/{{my_cart.product.id}}/">
+            <img src="{{ my_cart.product.signature_img.url }}" class="align-self-center mr-3" style="width:200px; height:200px">
+            <div class="media-body">
+                <h5 class="mt-0">{{my_cart.product.title}}</h5>
+                <p>{{my_cart.product.brand}}</p>
+            </a>
+                <br />
+                <div class="mt-5">
+                    <br />
+                    
+                    <button class="btn btn-secondary btn-minus" id="decrease">
+                        <i class="fa fa-minus"></i>
+                    </button>
+                    <input type="text" style="width: 3rem; border: none;" name="quantity" class="qty-input text-center" value="{{my_cart.product_qty}}">
+                    <button class="btn btn-secondary btn-plus" id="increase">
+                        <i class="fa fa-plus"></i>
+                    </button>
+                    <button class="btn btn-dark ml-3 btn-remove" style="float: right; color:#fff;"><i class="fa fa-trash"></i></button>
+                    <span class="sub_total-{{my_cart.product.id}}" style="float: right; margin-top: 7px; color: black;">¥{{my_cart.sub_total | intcomma}}円</span>
+                </div>
+            </div>
+        </div>
+       
+        <hr />
+        {% endfor %}
+                <!-- 페이징 -->
+<ul class="pagination justify-content-center mt-5">
+    <!-- 이전 페이지 -->
+    {% if cart_list.has_previous %}<!-- 이전 페이지 있음 -->
+        <li class="page-item">
+            <a class="page-link" href="?page={{ cart_list.previous_page_number }}">前のページ </a>
+        </li>
+    {% else %}<!-- 이전 페이지 없음 -->
+        <li class="page-item disabled">
+            <a class="page-link" tabindex="-1" aria-disabled="true" href="#">前のページ </a>
+        </li>
+    {% endif %}
+
+    <!-- 페이지 리스트 -->
+    {% for page_number in cart_list.paginator.page_range %}
+        <!-- 현재 페이지를 기준으로 좌우 5개씩 보이도록 처리 -->
+        {% if page_number >= cart_list.number|add:-5 and page_number <= cart_list.number|add:5 %}
+            {% if page_number == cart_list.number %}<!-- 현재 페이지 번호와 같음 -->
+                <li class="page-item active" aria-current="page">
+                    <a class="page-link" href="/shop/cart_list?page={{ page_number }}">{{ page_number }}</a>
+                </li>
+            {% else %}<!-- 현재 페이지 번호와 다름 -->
+                <li class="page-item">
+                    <a class="page-link" href="/shop/cart_list?page={{ page_number }}">{{ page_number }}</a>
+                </li>
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+
+    <!-- 다음 페이지 -->
+    {% if cart_list.has_next %}<!-- 다음 페이지 있음 -->
+        <li class="page-item">
+            <a class="page-link" href="/shop/cart_list?page={{ cart_list.next_page_number }}">次のページ</a>
+        </li>
+    {% else %}<!-- 다음 페이지 없음 -->
+        <li class="page-item disabled">
+            <a class="page-link" tabindex="-1" aria-disabled="true" href="#">次のページ</a>
+        </li>
+    {% endif %}
+</ul>
+<!--// 페이징 -->
+    </div>
+    <div class="col-md-4">
+        {% if cart_list  %}
+        <div class="card text-center">
+            <div class="card-header font-weight-bold">
+                決済商品 <small class="text-muted">合計 {{cart_count}}けん</small>
+            </div>
+            <div class="card-body">
+                <p class="card-text text-left">小計<span class="total-price" style="float: right;">¥{{ total_cart | intcomma}}</span></p>
+                <p class="card-text text-left">割引 
+                    <span class="sale-price" style="color: #37B6FF; float: right; margin-left: 10px;">-¥{{sale_price | intcomma}}</span>
+                    <span style="color: red; float: right;">15% SAVE</span>
+                </p>
+                <hr />
+                <p class="card-text text-left font-weight-bold">商品合計<span class="calculate" style="float: right;">¥{{ cart_sum | intcomma}}</span></p>
+            </div>
+            <div class="card-footer text-dark">
+                <a href="#" class="btn btn-primary" style="width: 320px;">ご注文手続きへ</a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+        {% else %}
+        <div class="card mb-5" style="width: 70rem;">
+            <div class="card-body">
+              <h5 class="card-title">ショッピングカート</h5>
+              <h6 class="card-subtitle mb-2 text-muted"></h6>
+              <br />
+              <p class="card-text">カートに商品は入っていません。</p>
+              <a href="{% url 'shop:shop_list' %}" class="btn btn-primary">ショッピングを続ける。</a>
+            </div>
+          </div>
+    {% endif %}
+
+    
+
+
+        </div>
+</div>
+<script>
+    $(document).ready(function() {
+        $('.btn-minus').click(function(e) {
+            e.preventDefault();
+            var inc_value = $(this).closest('.product_data').find('.qty-input').val();
+            var value = parseInt(inc_value, 10);
+            value = isNaN(value) ? 0: value;
+            if(value > 1) {
+                value--;
+                $(this).closest('.product_data').find('.qty-input').val(value);
+            }
+
+        });
+        $('.btn-plus').click(function(e) {
+            e.preventDefault();
+            var inc_value = $(this).closest('.product_data').find('.qty-input').val();
+            var value = parseInt(inc_value, 10);
+            value = isNaN(value) ? 0: value;
+            if(value < 10) {
+                value++;
+                $(this).closest('.product_data').find('.qty-input').val(value);
+            }
+        });
+    });
+
+    //숫자 가격 표시 함수
+    function priceToString(price) {
+        return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
+
+    //plusBtn
+    $('.btn-plus').click(function (e) {
+        e.preventDefault();
+
+        var product_id = $(this).closest('.product_data').find('.prod_id').val();
+        var product_qty = $(this).closest('.product_data').find('.qty-input').val();
+        var token = $('input[name=csrfmiddlewaretoken]').val()
+        $.ajax({
+            method: "POST",
+            url: '{% url 'shop:plus_cart' %}',
+            dataType: 'JSON',
+            data: {
+                'product_id':product_id,
+                'product_qty':product_qty,
+                csrfmiddlewaretoken: token
+
+            },
+            success: function(response) {
+               var sub_total = priceToString(response.prod_price);
+               var total_price = priceToString(response.total_price);
+               var sale_price = priceToString(response.sale_price);
+               var calculate_price = priceToString(response.calculate);
+
+               $('.sub_total-' + product_id).text('¥' + sub_total)
+               $('.total-price').text('¥' + total_price)
+               $('.sale-price').text( '-' + '¥' + sale_price)
+               $('.calculate').text('¥' + calculate_price)
+               
+
+                
+            }
+        })
+    })
+
+     //minusBtn
+     $('.btn-minus').click(function (e) {
+        e.preventDefault();
+
+        var product_id = $(this).closest('.product_data').find('.prod_id').val();
+        var product_qty = $(this).closest('.product_data').find('.qty-input').val();
+        var token = $('input[name=csrfmiddlewaretoken]').val()
+        $.ajax({
+            method: "POST",
+            url: '{% url 'shop:minus_cart' %}',
+            dataType: 'JSON',
+            data: {
+                'product_id':product_id,
+                'product_qty':product_qty,
+                csrfmiddlewaretoken: token
+
+            },
+            success: function(response) {
+               var sub_total = priceToString(response.prod_price);
+               var total_price = priceToString(response.total_price);
+               var sale_price = priceToString(response.sale_price);
+               var calculate_price = priceToString(response.calculate);
+               
+               $('.sub_total-' + product_id).text('¥' + sub_total)
+               $('.total-price').text('¥' +  total_price)
+               $('.sale-price').text( '-' + '¥' + sale_price)
+               $('.calculate').text('¥' + calculate_price)
+                
+            }
+        })
+    })
+
+     //removeBtn
+     $('.btn-remove').click(function (e) {
+        e.preventDefault();
+
+        var product_id = $(this).closest('.product_data').find('.prod_id').val();
+        var token = $('input[name=csrfmiddlewaretoken]').val()
+        $.ajax({
+            method: "POST",
+            url: '{% url 'shop:delete_cart' %}',
+            dataType: 'JSON',
+            data: {
+                'product_id':product_id,
+                csrfmiddlewaretoken: token
+
+            },
+            success: function(response) {
+                location.reload();
+            }
+        })
+    })
+
+
+    
+</script>
+
+{% endblock  %}

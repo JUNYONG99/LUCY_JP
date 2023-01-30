@@ -1,0 +1,283 @@
+{% block review_script %}
+<script>
+    // レビュー
+    function get_review(review_id) {
+        console.log('get_review', review_id)
+        $.ajax({
+            type: 'GET',
+            url: '{% url 'shop:review_read' %}',
+            dataType: 'JSON',
+            data: {
+                'csrfmiddlewaretoken': '{{csrf_token}}',
+                'review_id': review_id,
+            },
+            success: function (response) {
+                console.log(response)
+                let rate = response['review']['rate'];
+                let content = response['review']['content'];
+
+                $('#rateDone').addClass('d-none');
+                $('#rateForm input[name=rating][value="' + rate + '"]').prop('checked', true);
+                $('#rateForm textarea[name=content]').val(content);
+                $('#rateForm').removeClass('d-none');
+
+                $('#btnRateFormCreate').addClass('d-none');
+                $('#btnRateFormUpdate').data('review-id', review_id);
+                $('#btnRateFormUpdate').removeClass('d-none');
+            },
+            error: function(request, status, error){
+                alert(error);
+            }
+        });
+    }
+
+    // 削除
+    function delete_review(review_id) {
+        let answer = window.confirm('削除しますか？');
+        if (answer) {
+            $.ajax({
+                type: 'POST',
+                url: '{% url 'shop:review_delete' %}',
+                dataType: 'JSON',
+                data: {
+                    'csrfmiddlewaretoken': '{{csrf_token}}',
+                    'review_id': review_id,
+                },
+                success: function (response) {
+                    $('#rateForm input[name=rating][value="1"]').prop('checked', true);
+                    $('#rateForm textarea[name=content]').val('');
+                    get_review_list();
+                },
+                error: function(request, status, error){
+                    alert(error);
+                }
+            });
+        }
+    }
+
+    // レビューリスト
+    function get_review_list() {
+        let review_done = false;
+
+        $.ajax({
+            type: 'GET',
+            url: '{% url 'shop:review_list' %}',
+            dataType: 'JSON',
+            data: {
+                'csrfmiddlewaretoken': '{{csrf_token}}',
+                'product_id': '{{ product.id }}',
+            },
+            success: function (response) {
+                $('#rateDone').removeClass('d-none');
+                $('#rateForm').addClass('d-none');
+                $('#btnRateFormCreate').removeClass('d-none');
+                $('#btnRateFormUpdate').addClass('d-none');
+
+                let row = '';
+                $('#review_list').empty();
+                for (let i=0; i < response['review_list'].length; i++) {
+                    let review_id = response['review_list'][i]['review_id'];
+                    let profile_img = response['review_list'][i]['profile_img'];
+                    let nickname = response['review_list'][i]['nickname'];
+                    let yyyyMMdd = response['review_list'][i]['created_at'].split('T')[0];
+                    let hhmmss = response['review_list'][i]['created_at'].split('T')[1].split('.')[0];
+                    let created_at = yyyyMMdd + ' ' + hhmmss
+                    let content = response['review_list'][i]['content'];
+                    let rate = response['review_list'][i]['rate'];
+                    let user_id = response['review_list'][i]['user_id'];
+
+                    row += '<div class="media mb-4" id="review-{{ review.pk }}">';
+
+                    if (profile_img) {
+                        row += '<img class="d-flex mr-3 rounded-circle" src="/media/' + profile_img + '" id="userImg" class="mt-3" style="width:50px; height: 50px; border-radius: 50%; border: 1px solid #ccc;">';
+                    } else {
+                        row += '<img class="d-flex mr-3 rounded-circle" src="https://via.placeholder.com/50">';
+                    }
+
+                    row += '<div class="media-body">';
+                    row += '<h5 class="mt-0">' + nickname + '&nbsp;&nbsp;';
+                    row += '<small class="text-muted">' + created_at + '</small>';
+
+                    if (user_id == '{{ user.id }}') {
+                        row += '<button type="button" class="btn btn-sm btn-warning ml-2" onclick="get_review(' + review_id + ')">修整</button>'
+                        row += '<button type="button" class="btn btn-sm btn-danger ml-2" onclick="delete_review(' + review_id + ')">削除</button>'
+                        review_done = true;
+                    }
+
+                    row += '</h5>';
+                    row += '<div class="rating-star">';
+                    row += '<span>';
+
+                    if (rate == 0.5) {
+                        row += '<i class="fa fa-star-half-o"></i>';
+                        row += '<i class="fa fa-star-o"></i>';
+                        row += '<i class="fa fa-star-o"></i>';
+                        row += '<i class="fa fa-star-o"></i>';
+                        row += '<i class="fa fa-star-o"></i>';
+                    } else if (rate == 1) {
+                        row += '<i class="fa fa-star"></i>';
+                        row += '<i class="fa fa-star-o"></i>';
+                        row += '<i class="fa fa-star-o"></i>';
+                        row += '<i class="fa fa-star-o"></i>';
+                        row += '<i class="fa fa-star-o"></i>';
+                    } else if (rate == 1.5) {
+                        row += '<i class="fa fa-star"></i>';
+                        row += '<i class="fa fa-star-half-o"></i>';
+                        row += '<i class="fa fa-star-o"></i>';
+                        row += '<i class="fa fa-star-o"></i>';
+                        row += '<i class="fa fa-star-o"></i>';
+                    } else if (rate == 2) {
+                        row += '<i class="fa fa-star"></i>';
+                        row += '<i class="fa fa-star"></i>';
+                        row += '<i class="fa fa-star-o"></i>';
+                        row += '<i class="fa fa-star-o"></i>';
+                        row += '<i class="fa fa-star-o"></i>';
+                    } else if (rate == 2.5) {
+                        row += '<i class="fa fa-star"></i>';
+                        row += '<i class="fa fa-star"></i>';
+                        row += '<i class="fa fa-star-half-o"></i>';
+                        row += '<i class="fa fa-star-o"></i>';
+                        row += '<i class="fa fa-star-o"></i>';
+                    } else if (rate == 3) {
+                        row += '<i class="fa fa-star"></i>';
+                        row += '<i class="fa fa-star"></i>';
+                        row += '<i class="fa fa-star"></i>';
+                        row += '<i class="fa fa-star-o"></i>';
+                        row += '<i class="fa fa-star-o"></i>';
+                    } else if (rate == 3.5) {
+                        row += '<i class="fa fa-star"></i>';
+                        row += '<i class="fa fa-star"></i>';
+                        row += '<i class="fa fa-star"></i>';
+                        row += '<i class="fa fa-star-half-o"></i>';
+                        row += '<i class="fa fa-star-o"></i>';
+                    } else if (rate == 4) {
+                        row += '<i class="fa fa-star"></i>';
+                        row += '<i class="fa fa-star"></i>';
+                        row += '<i class="fa fa-star"></i>';
+                        row += '<i class="fa fa-star"></i>';
+                        row += '<i class="fa fa-star-o"></i>';
+                    } else if (rate == 4.5) {
+                        row += '<i class="fa fa-star"></i>';
+                        row += '<i class="fa fa-star"></i>';
+                        row += '<i class="fa fa-star"></i>';
+                        row += '<i class="fa fa-star"></i>';
+                        row += '<i class="fa fa-star-half-o"></i>';
+                    } else if (rate == 5) {
+                        row += '<i class="fa fa-star"></i>';
+                        row += '<i class="fa fa-star"></i>';
+                        row += '<i class="fa fa-star"></i>';
+                        row += '<i class="fa fa-star"></i>';
+                        row += '<i class="fa fa-star"></i>';
+                    }
+
+                    row += '</span>';
+                    row += '</div>';
+                    row += '<p>' + content + '</p>';
+                    row += '</div>';
+                    row += '</div>';
+                }
+
+                $('#review_list').html(row);
+
+                // 登録した場合
+                if (review_done) {
+                    $('#rateForm').addClass('d-none');
+                    $('#rateDone').removeClass('d-none');
+                    $('#btnRateFormCreate').addClass('d-none');
+                }
+                // 登録してない場合
+                else {
+                    $('#rateForm').removeClass('d-none');
+                    $('#rateDone').addClass('d-none');
+                    $('#btnRateFormCreate').removeClass('d-none');
+                }
+            },
+            error: function(request, status, error){
+                alert(error);
+            }
+        });
+    }
+
+    // レビューリスト
+    get_review_list();
+
+    // 登録
+    $('#btnRateFormCreate').on('click', function(e) {
+        e.preventDefault();
+        let rating = $('#rateForm input[name=rating]:checked').val();
+        let content = $('#rateForm textarea[name=content]').val();
+
+        if (!rating) {
+            alert('評価を残します。');
+            return false;
+        }
+
+        if (!content) {
+            alert('レビューをお願いします。');
+            return false;
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: '{% url 'shop:review_create' %}',
+            dataType: 'JSON',
+            data: {
+                'csrfmiddlewaretoken': '{{csrf_token}}',
+                'product_id': '{{ product.id }}',
+                'rating': rating,
+                'content': content,
+            },
+            success: function (response) {
+                if (response.result == 'ok') {
+                    $('#rateForm input[name=rating][value="1"]').prop('checked', true);
+                    $('#rateForm textarea[name=content]').val('');
+                    get_review_list();
+                    $('#rateDone').removeClass('d-none');
+                    $('#rateForm').addClass('d-none');
+                }
+            },
+            error: function(request, status, error){
+                alert(error);
+            }
+        });
+    })
+
+    // 修正
+    $('#btnRateFormUpdate').on('click', function() {
+        let review_id = $(this).data('review-id');
+        let rating = $('#rateForm input[name=rating]:checked').val();
+        let content = $('#rateForm textarea[name=content]').val();
+        console.log(rating, content)
+
+        if (!rating) {
+            alert('評価を残します。');
+            return false;
+        }
+
+        if (!content) {
+            alert('レビューをお願いします。');
+            return false;
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: '{% url 'shop:review_update' %}',
+            dataType: 'JSON',
+            data: {
+                'csrfmiddlewaretoken': '{{csrf_token}}',
+                'review_id': review_id,
+                'rating': rating,
+                'content': content,
+            },
+            success: function (response) {
+                $('#rateForm input[name=rating][value="1"]').prop('checked', true);
+                $('#rateForm textarea[name=content]').val('');
+                get_review_list();
+            },
+            error: function(request, status, error){
+                alert(error);
+            }
+        });
+    })
+</script>
+{% endblock %}

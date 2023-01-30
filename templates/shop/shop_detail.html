@@ -1,0 +1,239 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block main_area %}
+    <!-- base쪽에 있는 js쿼리가 적용 안되서 또 써줌 :  이유를 모르겠음 -->
+    <script src="{% static 'libs/js/jquery-3.6.3.min.js' %}"></script>
+     {% include 'base/error.html' %}
+    <div class="container-fluid py-5">
+        <div class="row px-xl-5 product_data">
+            <div class="col-lg-5 pb-5">
+                <div id="product" class="slide" data-ride="">
+                    <div class="inner border">
+                        <div class="item active">
+                            <img class="w-100 h-100" src={{ product.signature_img.url }} alt="Image">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-7 pb-5">
+                <h3 class="font-weight-semi-bold">{{ product.title }}</h3>
+                <div class="d-flex mb-3">
+                    <div class="text-warning mr-2">
+                        {% if product.average_review %}
+                            <div class="rating-star">
+                                <span style="margin-right: 0.5rem;">
+                                    <i class="fa fa-star{% if product.average_review < 0.5 %}-o{% elif product.average_review >= 0.5 and product.average_review < 1 %}-half-o{% endif %}"></i>
+                                    <i class="fa fa-star{% if product.average_review < 1.5 %}-o{% elif product.average_review >= 1.5 and product.average_review < 2 %}-half-o{% endif %}"></i>
+                                    <i class="fa fa-star{% if product.average_review < 2.5 %}-o{% elif product.average_review >= 2.5 and product.average_review < 3 %}-half-o{% endif %}"></i>
+                                    <i class="fa fa-star{% if product.average_review < 3.5 %}-o{% elif product.average_review >= 3.5 and product.average_review < 4 %}-half-o{% endif %}"></i>
+                                    <i class="fa fa-star{% if product.average_review < 4.5 %}-o{% elif product.average_review >= 4.5 and product.average_review < 5 %}-half-o{% endif %}"></i>
+                                </span>
+                                <span style="color: #787878;">({{ product.count_review }})</span>
+                            </div>
+                        {% else %}
+                            <div class="rating-star">
+                                <span style="margin-right: 0.5rem;">
+                                <i class="fa fa-star-o"></i>
+                                <i class="fa fa-star-o"></i>
+                                <i class="fa fa-star-o"></i>
+                                <i class="fa fa-star-o"></i>
+                                <i class="fa fa-star-o"></i>
+                                </span>
+                                <span style="color: #787878;">({{ product.count_review }})</span>
+                            </div>
+                        {% endif %}
+                        <small class="ml-1" style="color:gray" >{{ product.average_review }}점</small>
+                    </div>
+                    <small class="pt-1 ml-1" style="color:#007bff; font-weight: 800;">후기 {{ product.review_set.all|length }}개</small>
+                </div>
+                <h3 class="font-weight-semi-bold mb-4">{{ product.price | intcomma}}원</h3>
+                <p class="mb-4">{{ product.brand}}</p>
+
+                <form method="POST" action="/shop/{{product.id}}/add_cart/">
+                    <div class="d-flex align-items-center mb-5 pt-2" >
+                        {% csrf_token %}
+                        <input type="hidden" value="{{product.id}}" class="prod_id">
+                        <div class="input-group quantity mr-3" style="width: 130px;">
+                            <div class="input-group-btn">
+                                <button class="btn btn-primary btn-minus" id="decrease">
+                                    <i class="fa fa-minus"></i>
+                                </button>
+                            </div>
+                            <input type="text" name="quantity" class="form-control qty-input text-center" value="1">
+                            <div class="input-group-btn">
+                                <button class="btn btn-primary btn-plus" id="increase">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                                <!-- 스크립트 문 역시 적용 안되서 또 선언 해 줌 -->
+                                <script>
+                                    $(document).ready(function() {
+                                        $('.btn-minus').click(function(e) {
+                                            e.preventDefault();
+                                            var inc_value = $(this).closest('.product_data').find('.qty-input').val();
+                                            var value = parseInt(inc_value, 10);
+                                            value = isNaN(value) ? 0: value;
+                                            if(value > 1) {
+                                                value--;
+                                                $(this).closest('.product_data').find('.qty-input').val(value);
+                                            }
+
+                                        });
+                                        $('.btn-plus').click(function(e) {
+                                            e.preventDefault();
+                                            var inc_value = $(this).closest('.product_data').find('.qty-input').val();
+                                            var value = parseInt(inc_value, 10);
+                                            value = isNaN(value) ? 0: value;
+                                            if(value < 10) {
+                                                value++;
+                                                $(this).closest('.product_data').find('.qty-input').val(value);
+                                            }
+                                        });
+                                    });
+                                </script> <!-- script end -->
+                            </div>
+                        </div>
+                        {% if user.is_authenticated %}
+                            <button type="submit" class="btn btn-primary px-3"><i class="fa fa-shopping-cart"></i>장바구니</button>
+                        {% else %}
+                            <a href="{% url 'account:login' %}" class="btn btn-primary px-3" style="color: #fff;"><i class="fa fa-shopping-cart"></i>장바구니</a>
+                        {% endif %}
+                </form>
+                <div class="d-flex pt-2" style="margin-left: 30px;">
+                    {% if user.is_authenticated %}
+                        {% if like %}
+                            <!-- 좋아요 취소 -->
+                            <a href="{% url 'shop:unlike_page' product.pk %}" style="color: red;">
+                                <i class="fa fa-heart fa-2x"></i>
+                            </a>
+                        {% else %}
+                            <!-- 좋아요 등록 -->
+                            <a href="{% url 'shop:like_page' product.pk %}" style="color: #ccc;">
+                                <i class="fa fa-heart-o fa-2x"></i>
+                            </a>
+                        {% endif %}
+                    {% else %}
+                        <a href="{% url 'account:login' %}" style="color: #ccc;">
+                            <i class="fa fa-heart-o fa-2x"></i>
+                        </a>
+                    {% endif %}
+                    <p class="text-dark font-weight-medium mb-0 mr-2 ml-3" style="font-size: 18px; margin-top: 3px;">
+                        {{ like_count }}
+                    </p>
+                </div>
+
+                <div class="d-inline-flex">
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row px-xl-5">
+        <div class="col">
+            <div class="nav nav-tabs justify-content-center border-secondary mb-4">
+                <a class="nav-item nav-link active" data-toggle="tab" href="#tab-pane-1"><h6>상품상세</h6></a>
+                <a class="nav-item nav-link" data-toggle="tab" href="#tab-pane-2"><h6>구매후기</h6></a>
+                <a class="nav-item nav-link" data-toggle="tab" href="#tab-pane-3"><h6>상품문의</h6></a>
+            </div>
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="tab-pane-1">
+                    <h4 class="mb-3">상품상세</h4>
+                    {{ product.info | linebreaks }}
+                </div>
+                <div class="tab-pane fade" id="tab-pane-2">
+                    <div class="row">
+                        <div class="col-md-6">
+                            {% if product.review_set.exists %}
+                                <h4 class="mb-4">{{ product.title }} 구매후기 {{ product.review_set.all|length }}개</h4>
+                            {% endif %}
+                            <div id="review_list"></div>
+                        </div>
+                        {% include 'base/modal.html'%}
+                        <div class="review-form col-md-6">
+                            <h4 class="mb-4">후기를 남겨주세요.</h4>
+                            {% if user.is_authenticated %}
+                                <div id="divRateForm">
+                                    <h3 id="rateDone" class="{% if not review %}d-none{% endif %}">상품평을 이미 등록하셨습니다.</h3>
+                                    <form id="rateForm" class="{% if review %}d-none{% endif %}">
+                                        <div class="d-flex my-3">
+                                            <p class="mb-0 mr-2">평점 * :</p>
+                                            <div class="form-group rate">
+                                                <input type="radio" name="rating" id="rating10" value="5" required><label for="rating10" title="5"></label>
+                                                <input type="radio" name="rating" id="rating9" value="4.5" required><label for="rating9" title="4.5" class="half"></label>
+                                                <input type="radio" name="rating" id="rating8" value="4" required><label for="rating8" title="4"></label>
+                                                <input type="radio" name="rating" id="rating7" value="3.5" required><label for="rating7" title="3.5" class="half"></label>
+                                                <input type="radio" name="rating" id="rating6" value="3" required><label for="rating6" title="3"></label>
+                                                <input type="radio" name="rating" id="rating5" value="2.5" required><label for="rating5" title="2.5" class="half"></label>
+                                                <input type="radio" name="rating" id="rating4" value="2" required><label for="rating4" title="2"></label>
+                                                <input type="radio" name="rating" id="rating3" value="1.5" required><label for="rating3" title="1.5" class="half"></label>
+                                                <input type="radio" name="rating" id="rating2" value="1" required><label for="rating2" title="1"></label>
+                                                <input type="radio" name="rating" id="rating1" value="0.5" required><label for="rating1" title="0.5" class="half"></label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group-review">
+                                            <label for="content">구매후기 *</label>
+                                            <textarea name="content" cols="30" rows="5" class="review-content-field form-control"></textarea>
+                                        </div>
+                                        <div class="form-group-review-button mb-0">
+                                            <button type="button" class="btn btn-primary px-3 d-none" id="btnRateFormCreate">등록하기</button>
+                                            <button type="button" class="btn btn-warning px-3 d-none" id="btnRateFormUpdate" data-review-id="">수정하기</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            {% else %}
+                                <a role="button" class="btn btn-outline-dark btn-block btn-sm" href="#" data-toggle="modal" data-target="#loginModal">로그인을 해주십시오.</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="tab-pane-3">
+                    <div class="row">
+                        <div class="col-md-6">
+                            {% if product.inquiry_set.exists %}
+                                <h4 class="mb-4">{{ product.title }} 상품문의 {{ product.inquiry_set.all|length }}개</h4>
+                            {% endif %}
+                            <div id="inquiry_list"></div>
+                        </div>
+                        {% include 'base/modal.html'%}
+                        <div class="inquiry-form col-md-6">
+                            <h4 class="mb-4">문의를 남겨주세요.</h4>
+                            {% if user.is_authenticated %}
+                                <div id="divInquiryForm">
+                                    <h6 id="inquiryDone" class="{% if not inquiry %}d-none{% endif %}">이미 등록하신 문의가 존재합니다.<p>답변 여부를 확인 후, 아래에 추가 문의를 남겨주세요.</p> </h6>
+                                    <form id="inquiryForm" class="{% if inquiry %}d-none{% endif %}">
+                                        <div class="d-flex my-3">
+                                        </div>
+                                        <div class="form-group-inquiry">
+                                            <label for="content">상품문의 *</label>
+                                            <textarea name="content" cols="30" rows="5" class="inquiry-content-field form-control"></textarea>
+                                        </div>
+                                        <div class="form-group-inquiry-button mb-0">
+                                            <button type="button" class="btn btn-primary px-3 d-none" id="btnInquiryFormCreate">등록하기</button>
+                                            <button type="button" class="btn btn-warning px-3 d-none" id="btnInquiryFormUpdate" data-inquiry-id="">수정하기</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            {% else %}
+                                <a role="button" class="btn btn-outline-dark btn-block btn-sm" href="#" data-toggle="modal" data-target="#loginModal">로그인을 해주십시오.</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+<!-- javascript for review -->
+{% block review_script %}
+    {% include 'base/review_script.html' %}
+{% endblock %}
+<!--// javascript for review -->
+
+<!-- javascript for inquiry -->
+{% block inquiry_script %}
+    {% include 'base/inquiry_script.html' %}
+{% endblock %}
+<!--// javascript for inquiry -->
+

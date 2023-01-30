@@ -1,0 +1,9 @@
+.product__item img {
+    opacity: 1;
+	-webkit-transition: .3s ease-in-out;
+	transition: .3s ease-in-out;
+}
+
+.product__item:hover img {
+	opacity: .7;
+}

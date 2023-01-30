@@ -1,0 +1,68 @@
+/* RATING REVIEW */
+
+.checked1 {
+    color: red;
+  }
+  
+  .my-btn {
+    background: inherit!important;
+    border:  0!important;
+    cursor: pointer;
+  }
+  
+  
+  /* RATING REVIEW 2 */
+  /* hide radio button */
+  .rate > input {
+    display: none;
+  }
+  
+  .rate {
+    display: inline-block;
+    color: rgb(193, 193, 193);
+    border: 0;
+  }
+  
+  .rate > label {
+    float: right;
+  }
+  
+  /* start showing the stars */
+  .rate > label::before {
+    display: inline-block;
+    font-size: 2.0rem;
+    font-family: FontAwesome;
+  
+    /* actual star */
+    content: "\f005";
+  
+    margin: 0;
+    padding: 0.3rem .2rem;
+    cursor: pointer;
+  }
+  
+  /* Half star */
+  /* this will hide the star or position the half star right below the star or stacked each other */
+  .rate .half::before {
+    content: "\f089";
+    position: absolute;
+    padding-right: 0;
+  }
+  
+  /* click and hover */
+  input:checked ~ label, label:hover ~ label {
+    color: #ffb503;
+  }
+  
+  /* hover highlight */
+  input:checked + label:hover, 
+  input:checked ~ label:hover,
+  input:checked ~ label:hover ~ label,
+  label:hover ~ input:checked ~ label {
+    color: #cc9000;
+  }
+  
+  .rating-star i {
+    color:#ffb503!important;
+  
+  }

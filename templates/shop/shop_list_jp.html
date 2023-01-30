@@ -1,0 +1,110 @@
+{% extends 'base/base_shop_list.html' %}
+{% load static %}
+{% load humanize %}
+{% block main_area %}
+<div class="col-lg-3">
+    <div class="shop__sidebar">
+        <div class="shop__sidebar__search">
+            <form action="{% url 'shop:search' %}">
+                <input name="q" type="text" id="search-input" placeholder="キーワードから探す…">
+                <button type="submit"><span class="icon_search"></span></button>
+            </form>
+        </div>
+        <div class="shop__sidebar__accordion">
+            <div class="accordion" id="accordionExample">
+                <div class="card">
+                    <div class="card-heading">
+                        <a data-toggle="collapse" data-target="#collapseOne">カテゴリー</a>
+                    </div>
+                    <div id="collapseOne" class="collapse show" data-parent="#accordionExample">
+                        <div class="card-body">
+                            <div class="shop__sidebar__categories">
+                                <ul class="nice-scroll">
+                                    {% for category in categories %}
+                                    <li><a href="{{ category.get_absolute_url }}">{{ category }} ({{category.product_set.count}})</a></li>
+                                    {% endfor %}
+                                    <li><a href="/shop/category/no_category/">その他({{no_category_product_count}})</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-heading">
+                        <a data-toggle="collapse" data-target="#collapseTwo">ブランド</a>
+                    </div>
+                    <div id="collapseTwo" class="collapse show" data-parent="#accordionExample">
+                        <div class="card-body">
+                            <div class="shop__sidebar__brand">
+                                <ul>
+                                    {% for brand in brands %}
+                                    <li><a href="{{ brand.get_absolute_url }}">{{brand}} ({{ brand.product_set.count }})</a></li>
+                                    {% endfor %}
+                                    <li><a href="/shop/brand/no_brand/">無印良品({{ no_brand_product_count }})</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-lg-9">
+    <div class="row">
+    {% if product_list %}
+        {% for product in product_list %}
+        <div class="col-lg-4 col-md-6 col-sm-6">
+            <div class="product__item">
+                <div class="product__item__pic set-bg">
+                    <img src="{{ product.signature_img.url }}" class="card-img-top" style=" height: 19rem; object-fit: cover; padding: 16px;">
+                </div>
+            </div>
+            <div class="card-body mb-2">
+                <h6 class="card-title">{{product.title | truncatechars:17}}<br />
+                    <small class="text-muted">{{product.brand}}</small></h6>
+                    <div class="text-warning mr-2">
+                        {% if product.average_review %}
+                            <div class="rating-star">
+                                <span style="margin-right: 0.5rem;">
+                                    <i class="fa fa-star{% if product.average_review < 0.5 %}-o{% elif product.average_review >= 0.5 and product.average_review < 1 %}-half-o{% endif %}"></i>
+                                    <i class="fa fa-star{% if product.average_review < 1.5 %}-o{% elif product.average_review >= 1.5 and product.average_review < 2 %}-half-o{% endif %}"></i>
+                                    <i class="fa fa-star{% if product.average_review < 2.5 %}-o{% elif product.average_review >= 2.5 and product.average_review < 3 %}-half-o{% endif %}"></i>
+                                    <i class="fa fa-star{% if product.average_review < 3.5 %}-o{% elif product.average_review >= 3.5 and product.average_review < 4 %}-half-o{% endif %}"></i>
+                                    <i class="fa fa-star{% if product.average_review < 4.5 %}-o{% elif product.average_review >= 4.5 and product.average_review < 5 %}-half-o{% endif %}"></i>
+                                </span>
+                                <span style="color: #787878;">({{ product.count_review }})</span>
+                            </div>
+                        {% else %}
+                            <div class="rating-star">
+                                <span style="margin-right: 0.5rem;">
+                                <i class="fa fa-star-o"></i>
+                                <i class="fa fa-star-o"></i>
+                                <i class="fa fa-star-o"></i>
+                                <i class="fa fa-star-o"></i>
+                                <i class="fa fa-star-o"></i>
+                                </span>
+                                <span style="color: #787878;">({{ product.count_review }})</span>
+                            </div>
+                        {% endif %}
+                        <small class="ml-1" style="color:gray" >{{ product.average_review }}点</small>
+                    </div>
+                <h5 class="mb-3">¥{{ product.price | intcomma}}</h5>
+                <a href="{{product.get_absolute_url }}" class="btn btn-primary">アイテム詳細を見る</a>
+            </div>
+        </div>
+        {% endfor %}
+        
+    {% else %}
+    <div class="alert alert-primary text-center" style="width: 90em; padding: 70px"  role="alert">
+        商品がいません。
+    </div>
+    {% endif %}
+    </div>
+
+    
+    {% include 'base/pagination_jp.html' %}
+</div>
+
+    
+{% endblock %}

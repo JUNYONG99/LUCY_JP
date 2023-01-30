@@ -1,0 +1,14 @@
+<!-- ステータスメッセージ -->
+{% if messages %}
+{% for message in messages %}
+      <div{% if message.tags %} class="alert alert-{{ message.tags }} alert-auto-dismissible text-center" {% endif %}>{{ message }}</div>
+{% endfor %}
+{% endif %}
+<script>
+    //3秒後にステータスメッセージが消えます
+    window.setTimeout(function() {
+      $(".alert-auto-dismissible").fadeTo(500, 0).slideUp(500, function(){
+          $(this).remove();
+      });
+  }, 1000);
+  </script>

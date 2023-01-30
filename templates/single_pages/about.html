@@ -1,0 +1,74 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block main_area %}
+<style>
+    img {
+        opacity: 0.3;
+      }
+</style>
+<div id="page-content">
+
+    <div class="page section-header text-center">
+        <div class="page-title">
+            <div class="wrapper"><h1 class="page-width">About Us</h1></div>
+          </div>
+    </div>
+
+    <div class="map-section map">
+        <iframe src="https://www.google.com/maps/embed?pb=" height="350" allowfullscreen></iframe>
+        <div class="container">
+            <div class="row">
+                <div class="map-section__overlay-wrapper">
+                    <div class="map-section__overlay">
+                        <p><a href="https://www.google.com/maps/dir/37.5868023,126.9258713" class="btn btn-secondary btn-small" target="_blank"><i class="fa fa-location-arrow" aria-hidden="true"></i>
+                            길 찾기 시작!</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="row">
+            <div class="col-12 col-sm-12 col-md-8 col-lg-8 mb-4">
+                <div class="card bg-white text-black text-center">
+                    <img src="{% static 'about_img.jpg' %}" class="card-img" alt="Card image">
+                    <div class="card-img-overlay">
+                        <br><br><br><br><br><br><br><br><br><br>
+                        <h2 class="card-title">환영합니다!</h2>
+                        <p class="card-text">LUCY에 오신 것을 환영합니다. </p>
+                    </div>
+                </div>
+                <div class="formFields contact-form form-vertical">
+                    <div class="row"></div>
+                    <div class="row">
+                        <div class="col-12 col-sm-12 col-md-12 col-lg-12"></div>
+                    </div>
+                    <div class="row"></div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-12 col-md-4 col-lg-4">
+                <div class="open-hours">
+                    <li><i class="fa fa-clock-o fa-lg" aria-hidden="true"></i>
+                        <strong>영업시간</strong></li>
+                    월 - 금 : 9am - 6pm<br>
+                    토: 11am - 3pm
+                </div>
+                <hr />
+                <ul class="addressFooter">
+                    <li><strong><i class="fa fa-map-marker fa-lg" aria-hidden="true"></i>
+                        주소:<strong><p>서울특별시 서대문구</p></li>
+                    <li><strong><i class="fa fa-phone-square fa-lg" aria-hidden="true"></i>
+                        전화번호:<strong><p>(02) 000 000 0000</p></li>
+                    <li><strong><i class="fa fa-envelope-open fa-lg" aria-hidden="true"></i>
+                        이메일:<strong><p>admin@LUCY.com</p></li>
+                </ul>
+                <hr />
+             </div>
+        </div>
+    </div>
+    
+</div>
+
+{% endblock %}

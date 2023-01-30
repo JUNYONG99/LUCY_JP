@@ -1,0 +1,223 @@
+{% block inquiry_script %}
+<script>
+    // 문의 정보
+    function get_inquiry(inquiry_id) {
+        console.log('get_inquiry', inquiry_id)
+        $.ajax({
+            type: 'GET',
+            url: '{% url 'shop:inquiry_read' %}',
+            dataType: 'JSON',
+            data: {
+                'csrfmiddlewaretoken': '{{csrf_token}}',
+                'inquiry_id': inquiry_id,
+            },
+            success: function (response) {
+                console.log(response)
+                let content = response['inquiry']['content'];
+
+                $('#inquiryDone').addClass('d-none');
+                $('#inquiryForm textarea[name=content]').val(content);
+                $('#inquiryForm').removeClass('d-none');
+
+                $('#btnInquiryFormCreate').addClass('d-none');
+                $('#btnInquiryFormUpdate').data('inquiry-id', inquiry_id);
+                $('#btnInquiryFormUpdate').removeClass('d-none');
+            },
+            error: function(request, status, error){
+                alert(error);
+            }
+        });
+    }
+
+    // 문의 삭제
+    function delete_inquiry(inquiry_id) {
+        let answer = window.confirm('문의를 삭제하시겠습니까?');
+        if (answer) {
+            $.ajax({
+                type: 'POST',
+                url: '{% url 'shop:inquiry_delete' %}',
+                dataType: 'JSON',
+                data: {
+                    'csrfmiddlewaretoken': '{{csrf_token}}',
+                    'inquiry_id': inquiry_id,
+                },
+                success: function (response) {
+                    $('#inquiryForm textarea[name=content]').val('');
+                    get_inquiry_list();
+                },
+                error: function(request, status, error){
+                    alert(error);
+                }
+            });
+        }
+    }
+
+    // 문의 목록 가져오기
+    function get_inquiry_list() {
+        let inquiry_done = false;
+
+        $.ajax({
+            type: 'GET',
+            url: '{% url 'shop:inquiry_list' %}',
+            dataType: 'JSON',
+            data: {
+                'csrfmiddlewaretoken': '{{csrf_token}}',
+                'product_id': '{{ product.id }}',
+            },
+            success: function (response) {
+                $('#inquiryDone').removeClass('d-none');
+                $('#inquiryForm').addClass('d-none');
+                $('#btnInquiryFormCreate').removeClass('d-none');
+                $('#btnInquiryFormUpdate').addClass('d-none');
+
+                let row = '';
+                $('#inquiry_list').empty();
+                for (let i=0; i < response['inquiry_list'].length; i++) {
+                    let inquiry_id = response['inquiry_list'][i]['inquiry_id'];
+                    let profile_img = response['inquiry_list'][i]['profile_img'];
+                    let nickname = response['inquiry_list'][i]['nickname'];
+                    let yyyyMMdd = response['inquiry_list'][i]['created_at'].split('T')[0];
+                    let hhmmss = response['inquiry_list'][i]['created_at'].split('T')[1].split('.')[0];
+                    let created_at = yyyyMMdd + ' ' + hhmmss
+                    let content = response['inquiry_list'][i]['content'];
+                    let user_id = response['inquiry_list'][i]['user_id'];
+                    let admin_answer = response['inquiry_list'][i]['admin_answer'];
+                    let admin_answered = response['inquiry_list'][i]['admin_answered'];
+
+
+                    row += '<div class="media mb-4" id="inquiry-{{ inquiry.pk }}">';
+
+                    if (profile_img) {
+                        row += '<img class="d-flex mr-3 rounded-circle" src="/media/' + profile_img + '" id="userImg" class="mt-3" style="width:50px; height: 50px; border-radius: 50%; border: 1px solid #ccc;">';
+                    } else {
+                        row += '<img class="d-flex mr-3 rounded-circle" src="https://via.placeholder.com/50">';
+                    }
+
+                    row += '<div class="media-body">';
+                    row += '<h5 class="mt-0">' + nickname + '&nbsp;&nbsp;';
+                    row += '<small class="text-muted">' + created_at + '</small>';
+
+                    if (user_id == '{{ user.id }}') {
+                        // 관리자 답변이 달렸다면 유저는 수정 기능 이용 불가
+                        if (admin_answered) {
+                            row += '<button type="button" class="btn btn-sm btn-danger ml-2" onclick="delete_inquiry(' + inquiry_id + ')">삭제</button>'
+                        } else {
+                            row += '<button type="button" class="btn btn-sm btn-warning ml-2" onclick="get_inquiry(' + inquiry_id + ')">수정</button>'
+                            row += '<button type="button" class="btn btn-sm btn-danger ml-2" onclick="delete_inquiry(' + inquiry_id + ')">삭제</button>'    
+                        }
+                        inquiry_done = true;
+                    }
+
+                    row += '</h5>';
+                    row += '<p>' + content + '</p>';
+                    // 관리자 답변이 달렸다면
+                    if (admin_answered) {
+                        row += '<div class="card border-light mb-3">';
+                        row += '<div class="card-header">' + 'From: LUCY' + '</div>';
+                        row += '<div class="card-body">';
+                        row +=  '<p class="card-text">' + admin_answer + '</p>';
+                        row +=  '</div>';
+                        row +=  '</div>';
+                        row +=  '</div>';
+                    // 관리자 답변이 없다면      
+                    } else {
+                        row += '<div class="card border-light mb-3">';
+                            row += '<div class="card-header">' + 'From: LUCY' + '</div>';
+                            row += '<div class="card-body">';
+                            row +=  '<p class="card-text">' + '미답변 상태입니다.' + '</p>';
+                            row +=  '</div>';
+                            row +=  '</div>';
+                            row +=  '</div>';
+                        }    
+                    row += '</div>';
+                    row += '</div>';
+                }
+
+                $('#inquiry_list').html(row);
+
+                // 문의를 등록한 경우
+                if (inquiry_done) {
+                    $('#inquiryForm').removeClass('d-none');
+                    $('#inquiryDone').removeClass('d-none');
+                    $('#btnInquiryFormCreate').removeClass('d-none');
+                }
+                // 문의를 등록하지 않은 경우
+                else {
+                    $('#inquiryForm').removeClass('d-none');
+                    $('#inquiryDone').addClass('d-none');
+                    $('#btnInquiryFormCreate').removeClass('d-none');
+                }
+            },
+            error: function(request, status, error){
+                alert(error);
+            }
+        });
+    }
+
+    // 문의 목록
+    get_inquiry_list();
+
+    // 문의 등록
+    $('#btnInquiryFormCreate').on('click', function(e) {
+        e.preventDefault();
+        let content = $('#inquiryForm textarea[name=content]').val();
+
+        if (!content) {
+            alert('후기를 남겨주세요.');
+            return false;
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: '{% url 'shop:inquiry_create' %}',
+            dataType: 'JSON',
+            data: {
+                'csrfmiddlewaretoken': '{{csrf_token}}',
+                'product_id': '{{ product.id }}',
+                'content': content,
+            },
+            success: function (response) {
+                if (response.result == 'ok') {
+                    $('#inquiryForm textarea[name=content]').val('');
+                    get_inquiry_list();
+                    $('#inquiryDone').removeClass('d-none');
+                    $('#inquiryForm').addClass('d-none');
+                }
+            },
+            error: function(request, status, error){
+                alert(error);
+            }
+        });
+    })
+
+    // 문의 수정
+    $('#btnInquiryFormUpdate').on('click', function() {
+        let inquiry_id = $(this).data('inquiry-id');
+        let content = $('#inquiryForm textarea[name=content]').val();
+        console.log(content)
+
+        if (!content) {
+            alert('후기를 남겨주세요.');
+            return false;
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: '{% url 'shop:inquiry_update' %}',
+            dataType: 'JSON',
+            data: {
+                'csrfmiddlewaretoken': '{{csrf_token}}',
+                'inquiry_id': inquiry_id,
+                'content': content,
+            },
+            success: function (response) {
+                $('#inquiryForm textarea[name=content]').val('');
+                get_inquiry_list();
+            },
+            error: function(request, status, error){
+                alert(error);
+            }
+        });
+    })
+</script>
+{% endblock %}

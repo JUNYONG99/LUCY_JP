@@ -1,0 +1,25 @@
+{% load static %}
+{% load crispy_forms_tags %}
+<link rel="stylesheet" href="{% static 'libs/css/bootstrap.min.css' %}" type="text/css">
+<div class="logo" style="text-align: center; margin-top: 20px;">
+    <a href="{% url 'single_pages:landing'%}" style="color: #333; text-decoration: none;">
+        <h2><strong>LUCY</strong></h2>
+    </a>
+</div>
+<div style="width: 450px; margin: 0 auto; padding 10px; margin-top: 70px; ">
+    <h2><strong>회원 가입</strong></h2>
+    <hr/>
+  
+    <form action = "" method = "POST">
+        {% csrf_token %}
+        {{ form|crispy  }}
+        <button type="submit" class="btn btn-primary" style="width: 450px;">가입하기</button>
+    </form>
+    <hr />
+    <div class="auth__alternative">
+        <p>이미 계정이 있으신가요?</p>
+        <a href="{% url 'account:login' %}">로그인</a>
+    </div>
+</div>
+
+<script src="{% static 'libs/js/bootstrap.min.js' %}" ></script>

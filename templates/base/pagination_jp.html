@@ -1,0 +1,41 @@
+<!-- ページネイション -->
+<ul class="pagination justify-content-center mt-5">
+    <!-- 前のページ  -->
+    {% if product_list.has_previous %}<!-- 前のページ ある -->
+        <li class="page-item">
+            <a class="page-link" href="?page={{ product_list.previous_page_number }}">前のページ </a>
+        </li>
+    {% else %}<!-- 前のページ なし -->
+        <li class="page-item disabled">
+            <a class="page-link" tabindex="-1" aria-disabled="true" href="#">前のページ </a>
+        </li>
+    {% endif %}
+
+    <!-- ページリスト -->
+    {% for page_number in product_list.paginator.page_range %}
+        <!-- 現在のページを基準に5個で処理 -->
+        {% if page_number >= product_list.number|add:-5 and page_number <= product_list.number|add:5 %}
+            {% if page_number == product_list.number %}<!-- 現在のページと一致　-->
+                <li class="page-item active" aria-current="page">
+                    <a class="page-link" href="?page={{ page_number }}">{{ page_number }}</a>
+                </li>
+            {% else %}<!-- 現在のページと違う -->
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_number }}">{{ page_number }}</a>
+                </li>
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+
+    <!-- 次のページ -->
+    {% if product_list.has_next %}<!-- 次のページ ある-->
+        <li class="page-item">
+            <a class="page-link" href="?page={{ product_list.next_page_number }}">次のページ</a>
+        </li>
+    {% else %}<!-- 次のページ　なし -->
+        <li class="page-item disabled">
+            <a class="page-link" tabindex="-1" aria-disabled="true" href="#">次のページ</a>
+        </li>
+    {% endif %}
+</ul>
+<!--// ページネイション -->

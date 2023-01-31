@@ -8,4 +8,4 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
         fields = ['signature_img', 'title', 'price',
-                  'qty', 'info', 'description', 'like_count', 'rating'] # 'id', 'name', 'slug', 
+                  'qty', 'info', 'description', 'like_count', 'rating']

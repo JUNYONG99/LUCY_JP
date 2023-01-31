@@ -1,4 +1,4 @@
-{% extends 'base/base.html' %}
+{% extends 'base/base_jp.html' %}
 {% load static %}
 {% load humanize %}
 {% block main_area %}
@@ -13,17 +13,18 @@
         {% for wish in wish_list %}
         <div class="col-lg-4 col-md-6 col-sm-6">
             <div class="product__item">
-                <div class="product__item__pic set-bg">
-                    <img src="{{ wish.product.signature_img.url }}" class="card-img-top" style="height: 260px;">
+                <div class="card">
+                    <a href="{{wish.product.get_absolute_url}}">
+                        <img src="{{wish.product.signature_img.url}}" alt="" width=600 height=260 >
+                     </a>
+                     <div class="card-body">
+                        <h6 class="card-title mt-2">{{wish.product.title}}<br />
+                            <small class="text-muted">{{wish.product.brand}}</small></h6>
+                        <h5 class="mb-3">￥{{ wish.product.price | intcomma}}<span style="float: right; color: red;"><i class="fa fa-heart fa-2x"></i></span></h5>
+                        
+                     </div>
                 </div>
-            </div>
-            <div class="card-body mb-2">
-                <h6 class="card-title">{{wish.product.title | truncatechars:17}}<br />
-                    <small class="text-muted">{{wish.product.brand}}</small></h6>
-                <h5 class="mb-3">¥{{ wish.product.price | intcomma}}</h5>
-                <a href="{{wish.product.get_absolute_url }}" class="btn btn-primary">アイテム詳細を見る</a>
-                <span style="float: right; color: red;"><i class="fa fa-heart fa-2x"></i></span>
-            </div>
+             </div>
         </div>
         {% endfor %}
         {% else %}

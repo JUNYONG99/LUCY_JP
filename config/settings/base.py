@@ -111,9 +111,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
-LANGUAGE_CODE = 'ko-kr'
+LANGUAGE_CODE = 'ja-JP'
 
-TIME_ZONE = 'Asia/Seoul'
+TIME_ZONE = 'Asia/Tokyo'
 
 USE_I18N = True
 
@@ -149,3 +149,4 @@ MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 MESSAGE_TAGS = {
     messages.ERROR: 'danger',
 }
+NUMBER_GROUPING = 3

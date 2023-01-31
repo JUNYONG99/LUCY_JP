@@ -12,18 +12,7 @@
     <hr/>
     <form action="{% url 'account:login' %}" method = "POST">
         {% csrf_token %}
-        <div id="div_id_username" class="form-group">
-            <label for="id_username" class=" requiredField">メール<span class="asteriskField">*</span></label> 
-            <div>
-               <input type="text" name="username" autofocus="" autocap italize="none" autocomplete="username" maxlength="255" class="textinput textInput form-control" required="" id="id_username">
-            </div>
-        </div>
-        <div id="div_id_password" class="form-group">
-            <label for="id_password" class=" requiredField">パスワード<span class="asteriskField">*</span></label>
-            <div>
-                <input type="password" name="password" autocomplete="current-password" class="textinput textInput form-control" required="" id="id_password">
-            </div>
-        </div>
+        {{ form|crispy  }}
         <button type="submit" class="btn btn-primary" style="width: 450px;">ログイン</button>
     </form>
     <hr />

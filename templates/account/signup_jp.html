@@ -12,48 +12,7 @@
   
     <form action = "" method = "POST">
         {% csrf_token %}
-        <div id="div_id_email" class="form-group">
-            <label for="id_email" class=" requiredField">メール<span class="asteriskField">*</span></label>
-            <div>
-                <input type="email" name="email" maxlength="255" class="emailinput form-control" required="" id="id_email">
-            </div>
-        </div>
-        <div id="div_id_name" class="form-group">
-            <label for="id_name" class=" requiredField">名前<span class="asteriskField">*</span></label> 
-            <div>
-                <input type="text" name="name" maxlength="24" class="textinput textInput form-control" required="" id="id_name">
-            </div>
-        </div>
-        <div id="div_id_nickname" class="form-group">
-             <label for="id_nickname" class=" requiredField">ニックネーム<span class="asteriskField">*</span></label>
-             <div>
-                <input type="text" name="nickname" maxlength="24" class="textinput textInput form-control" required="" id="id_nickname">
-            </div>
-        </div>
-        <div id="div_id_address" class="form-group">
-            <label for="id_address" class=" requiredField">住所<span class="asteriskField">*</span></label>
-            <div>
-                <input type="text" name="address" maxlength="255" class="textinput textInput form-control" required="" id="id_address">
-            </div>
-        </div>
-        <div id="div_id_phone" class="form-group">
-            <label for="id_phone" class=" requiredField">連絡先<span class="asteriskField">*</span></label> 
-            <div>
-                <input type="text" name="phone" maxlength="16" class="textinput textInput form-control" required="" id="id_phone">
-            </div>
-        </div>
-        <div id="div_id_password1" class="form-group">
-            <label for="id_password1" class=" requiredField">パスワード<span class="asteriskField">*</span></label>
-            <div>
-                <input type="password" name="password1" class="textinput textInput form-control" required="" id="id_password1">
-            </div> 
-        </div>
-        <div id="div_id_password2" class="form-group"> 
-            <label for="id_password2" class=" requiredField">パスワード確認<span class="asteriskField">*</span></label> 
-            <div>
-                <input type="password" name="password2" class="textinput textInput form-control" required="" id="id_password2">
-            </div>
-        </div>
+        {{ form|crispy  }}
         <button type="submit" class="btn btn-primary" style="width: 450px;">会員登録</button>
     </form>
     <hr />

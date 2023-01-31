@@ -3,7 +3,7 @@ from account.models import User
 from django.db.models import Avg
 
 
-# 카테고리 모델
+# カテゴリー
 class Category(models.Model):
     name = models.CharField(max_length=50, unique=True)
     slug = models.SlugField(max_length=200, unique=True, allow_unicode=True)
@@ -17,21 +17,8 @@ class Category(models.Model):
     class Meta:
         verbose_name_plural = 'Categories'
 
-# 일본 카테고리 모델
-class CategoryJP(models.Model):
-    name = models.CharField(max_length=50, unique=True)
-    slug = models.SlugField(max_length=200, unique=True, allow_unicode=True)
 
-    def __str__(self):
-        return self.name
-
-    def get_absolute_url(self):
-        return f'/shop/category/jp/{self.slug}/'
-
-    class Meta:
-        verbose_name_plural = 'Categories JP'
-
-# 브랜드 모델
+# ブランド
 class Brand(models.Model):
     name = models.CharField(max_length=50, unique=True)
     logo_img = models.ImageField(upload_to='shop/brands/%Y/%m/%d/', null=True, blank=True)
@@ -44,20 +31,20 @@ class Brand(models.Model):
         return f'/shop/brand/{self.slug}/'
 
 
-# 상품 모델
+# 商品
 class Product(models.Model):
-    signature_img = models.ImageField(upload_to='shop/images/%Y/%m/%d/')
-    title = models.CharField(max_length=30)  # 상품명
-    price = models.IntegerField(default=0)  # 상품 가격
-    qty = models.PositiveSmallIntegerField(null=False, default=1)  # 상품 수량
-    info = models.TextField(max_length=200, null=False)  # 상품 소개
-    like_count = models.IntegerField(default=0)  # 좋아요 수
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    signature_img = models.ImageField(verbose_name="商品イメージ",upload_to='shop/images/%Y/%m/%d/')
+    title = models.CharField(verbose_name="商品名", max_length=30)  
+    price = models.IntegerField(verbose_name="価格", default=0)  
+    qty = models.PositiveSmallIntegerField(verbose_name="カート商品", null=False, default=1)  
+    info = models.TextField(verbose_name="商品詳細", max_length=200, null=False)  
+    like_count = models.IntegerField(verbose_name="お気に入り数", default=0)  
+    created_at = models.DateTimeField(verbose_name="登録日時", auto_now_add=True)
+    updated_at = models.DateTimeField(verbose_name="修正時間", auto_now=True)
     category = models.ManyToManyField(
-        Category, blank=True)
+        Category, blank=True, verbose_name="カテゴリー")
     brand = models.ForeignKey(
-        Brand, null=True, blank=True, on_delete=models.SET_NULL)
+        Brand, null=True, blank=True, on_delete=models.SET_NULL, verbose_name="ブランド")
 
     def __str__(self):
         return f'[{self.pk}] {self.title}'
@@ -65,26 +52,26 @@ class Product(models.Model):
     def get_absolute_url(self):
         return f'/shop/{self.pk}/'
 
-    def average_review(self):  # 리뷰 평균 평점
+    def average_review(self):  # レビュー評価平均
         reviews = Review.objects.filter(product=self).aggregate(average=Avg('rate'))
         avg = 0
         if reviews['average'] is not None:
             avg = round(float(reviews['average']), 2)
         return avg
 
-    def count_review(self):  # 리뷰 수
+    def count_review(self):  # レビュー数
         count_review = Review.objects.filter(product=self).count()
         return count_review
 
-    @property  # 리뷰 정렬
+    @property  # レビュー整列
     def get_reviews(self):
         return self.reviews.all().order_by('-created_at')
 
 
-# 좋아요 모델
+# お気に入り
 class Like(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="会員")
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name="商品")
 
     def __str__(self):
         return f'{self.product} - {self.user}'
@@ -93,14 +80,14 @@ class Like(models.Model):
         return f'{self.product.get_absolute_url()}#like-{self.pk}'
 
 
-# 상품평 모델
+# レビュー
 class Review(models.Model):
-    content = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    rate = models.FloatField()
+    content = models.TextField(verbose_name="内容")
+    created_at = models.DateTimeField(verbose_name="登録日時", auto_now_add=True)
+    updated_at = models.DateTimeField(verbose_name="修正時間", auto_now=True)
+    user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, verbose_name="会員")
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name="商品")
+    rate = models.FloatField(verbose_name="評価")
 
     class Meta:
         ordering = ('-created_at',)
@@ -112,38 +99,37 @@ class Review(models.Model):
         return f'{self.product.get_absolute_url()}{self.pk}'
 
 
-# 상품 문의 모델
+# お問い合わせ
 class Inquiry(models.Model):
-    content = models.TextField()
-#    secret = models.BooleanField(default=False)
-    answer = models.TextField(null=True)
-    answered = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    content = models.TextField(verbose_name="内容")
+    answer = models.TextField(verbose_name="返信", null=True)
+    answered = models.BooleanField(verbose_name="返信確認", default=False)
+    created_at = models.DateTimeField(verbose_name="登録日時", auto_now_add=True)
+    updated_at = models.DateTimeField(verbose_name="登修正日時", auto_now=True)
+    user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, verbose_name="会員")
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name="商品")
 
     class Meta:
         ordering = ('-created_at',)
         verbose_name_plural = 'Inquiries'
 
     def __str__(self):
-        return f'[{self.pk}][{self.product.title}] - 문의자 : {self.user.nickname}'
+        return f'[{self.pk}][{self.product.title}] - 問い合わせ者 : {self.user.nickname}'
 
     def get_absolute_url(self):
         return f'{self.product.get_absolute_url()}{self.pk}'
 
 
-# 장바구니 모델
+# ショッピングカート
 class Cart(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    product_qty = models.IntegerField()
-    created_at = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="会員")
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name="商品")
+    product_qty = models.IntegerField(verbose_name="商品数量")
+    created_at = models.DateTimeField(verbose_name="登録日時", auto_now_add=True)
 
     def __str__(self):
-        return f'[{self.pk}] 상품-{self.product.title} | 사용자-{self.user.nickname} | 수량-{self.product_qty}'
+        return f'[{self.pk}] 商品-{self.product.title} | 会員-{self.user.nickname} | 数量 -{self.product_qty}'
 
-    # 해당 상품 개수에 맞춰 가격 변동
+    # 商品の数量に合わせて金額変更
     def sub_total(self):
-        return self.product.price * self.product_qty
+        return format(self.product.price * self.product_qty, ',')

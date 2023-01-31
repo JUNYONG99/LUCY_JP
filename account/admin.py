@@ -6,37 +6,37 @@ from .models import User
 
 
 class UserAdmin(BaseUserAdmin):
-    #목록
+    #リスト
     list_display = ('email', 'name', 'nickname', 'address', 'phone' ,'last_login')
     list_filter = ('is_superuser',)
     search_fields = ('email', 'name', 'nickname', 'address', 'phone')
     ordering = ('email',)
     filter_horizontal = ()
  
-    #수정
+    #修正
     form = UserChangeForm
     fieldsets = (
-        ('인증', {
+        ('認証', {
             'fields': ('email', 'password')
         }),
-        ('정보', {
+        ('情報', {
             'fields': ('name', 'nickname', 'address', 'phone', 'profile_img')
         }),
-        ('권한', {
+        ('権限.', {
             'fields': ('is_active', 'is_superuser', 'is_staff')
         }),
     )
     
-    #등록
+    #登録
     add_form = UserCreationForm
     add_fieldsets = (
-        ('인증', {
+        ('認証', {
             'fields': ('email', 'password1', 'password2')
         }),
-        ('정보', {
+        ('情報', {
             'fields': ('name', 'nickname', 'address', 'phone', 'profile_img'),
         }),
-        ('권한', {
+        ('権限', {
             'fields': ('is_active', 'is_superuser', 'is_staff')
         }),
     )

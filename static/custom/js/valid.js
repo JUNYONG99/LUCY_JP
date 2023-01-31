@@ -1,35 +1,35 @@
-// 이름 검증 함수
+// 名前検証関数
 function f_valid_name() {
     if (!re_name.exec($.trim($('#name').val()))) {
-        $('#name_small').text('이름을 올바르게 입력해 주세요.(2글자 이상, 4글자 이하)');
+        $('#name_small').text('名前を正しく入力してください。 (2文字以上、4文字以下)');
         $('#name_small').removeClass('text-primary').addClass('text-danger');
         $('#name').removeClass('is-valid').addClass('is-invalid').val('').focus();
         return false;
     } else {
-        $('#name_small').text('2글자 이상, 4글자 이하');
+        $('#name_small').text('2文字以上、4文字以下');
         $('#name_small').removeClass('text-danger').addClass('text-primary');
         $('#name').removeClass('is-invalid').addClass('is-valid');
     }
 }
 
-// 아이디 검증 함수
+// ID検証関数
 function f_valid_userid() {
     if (!re_userid.exec($.trim($('#userid').val()))) {
-        $('#userid_small').text('아이디를 올바르게 입력해 주세요.(6글자 이상, 12글자 이하)');
+        $('#userid_small').text('IDを正しく入力してください。(6文字以上、12文字以下)');
         $('#userid_small').removeClass('text-primary').addClass('text-danger');
         $('#userid').removeClass('is-valid').addClass('is-invalid').val('').focus();
         return false;
     } else {
-        $('#userid_small').text('6글자 이상, 12글자 이하');
+        $('#userid_small').text('6文字以上、12文字以下');
         $('#userid_small').removeClass('text-danger').addClass('text-primary');
         $('#userid').removeClass('is-invalid').addClass('is-valid');
     }
 }
 
-// 비밀번호 검증 함수
+//　パスワード検証関数
 function f_valid_password() {
     if (!re_password_with_specialkey.exec($.trim($('#password').val()))) {
-        $('#password_small').text('영문,숫자,특수기호를 조합해 8자리 이상으로 입력해주세요.').removeClass('text-muted').addClass('text-danger');;
+        $('#password_small').text('英文、数字、特殊記号を組み合わせて8桁以上で入力してください。').removeClass('text-muted').addClass('text-danger');;
         $('#password_small').removeClass('text-primary').addClass('text-danger');
         $('#password').removeClass('is-valid').addClass('is-invalid').val('').focus();
         return false;
@@ -40,10 +40,10 @@ function f_valid_password() {
     }
 }
 
-// 비밀번호 확인 검증
+// パスワード確認検証関数
 function f_valid_password2() {
     if ($.trim($('#password').val()) != $.trim($('#password2').val())) {
-        $('#password2_small').text('비밀번호가 일치하지 않습니다. ');
+        $('#password2_small').text('パスワードが一致しません。');
         $('#password2_small').removeClass('text-primary').addClass('text-danger');
         $('#password2').removeClass('is-valid').addClass('is-invalid').val('').focus();
         return false;
@@ -54,10 +54,10 @@ function f_valid_password2() {
     }
 }
 
-// 이메일 검증 함수
+// メール検証関数
 function f_valid_email() {
     if (!re_email.exec($.trim($('#email').val()))) {
-        $('#email_small').text('이메일을 올바르게 입력해 주세요.');
+        $('#email_small').text('メールを形式合わせて正しく入力してください。');
         $('#email_small').removeClass('text-primary').addClass('text-danger');
         $('#email').removeClass('is-valid').addClass('is-invalid').val('').focus();
         return false;
@@ -66,15 +66,15 @@ function f_valid_email() {
     }
 }
 
-// 전화번호 검증 함수
+// 電話番号検証関数
 function f_valid_tel() {
     if (!re_tel.exec($.trim($('#tel').val()))) {
-        $('#tel_small').text('전화번호를 올바르게 입력해 주세요.(-포함, 예시) 010-1234-5678)');
+        $('#tel_small').text('電話番号を正しく入力してください。（-含む、例) 010-1234-5678)');
         $('#tel_small').removeClass('text-primary').addClass('text-danger');
         $('#tel').removeClass('is-valid').addClass('is-invalid').val('').focus();
         return false;
     } else {
-        $('#tel_small').text('-포함, 예시) 010-1234-5678)');
+        $('#tel_small').text('-含む、例) 010-1234-5678');
         $('#tel_small').removeClass('text-danger').addClass('text-primary');
         $('#tel').removeClass('is-invalid').addClass('is-valid');
     }

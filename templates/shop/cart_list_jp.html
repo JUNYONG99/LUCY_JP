@@ -1,4 +1,4 @@
-{% extends 'base/base.html' %}
+{% extends 'base/base_jp.html' %}
 {% load static %}
 {% load humanize %}
 {% block main_area %}
@@ -35,7 +35,7 @@
                         <i class="fa fa-plus"></i>
                     </button>
                     <button class="btn btn-dark ml-3 btn-remove" style="float: right; color:#fff;"><i class="fa fa-trash"></i></button>
-                    <span class="sub_total-{{my_cart.product.id}}" style="float: right; margin-top: 7px; color: black;">¥{{my_cart.sub_total | intcomma}}円</span>
+                    <span class="sub_total-{{my_cart.product.id}}" style="float: right; margin-top: 7px; color: black;">¥{{my_cart.sub_total | intcomma}}</span>
                 </div>
             </div>
         </div>

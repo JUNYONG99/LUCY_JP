@@ -17,7 +17,6 @@ def shop_list(request):
     paginator = Paginator(product_list, 6)
     object_list = paginator.get_page(page)
 
-    # 넘겨줄 값
     context = {
         'product_list': object_list,
         'brands': Brand.objects.all(),
@@ -29,7 +28,7 @@ def shop_list(request):
 
     return render(request, "shop/shop_list_jp.html", context)
 
-# 상품 세부
+# 商品詳細
 def shop_detail(request, pk):
     product = Product.objects.get(id=pk)
     review_form = ReviewForm
@@ -52,7 +51,7 @@ def shop_detail(request, pk):
         }
     )
 
-# 검색 기능
+# 商品検索
 def search(request):
     q=request.GET['q']
     data = Product.objects.filter(title__icontains=q).order_by('-id')
@@ -71,7 +70,7 @@ def search(request):
                   }
             )
 
-# 리뷰 등록
+# レビュー登録
 """
 def review_page(request, pk):
     if request.method == 'POST':
@@ -90,7 +89,7 @@ def review_page(request, pk):
 """
 
 
-# 리뷰 목록
+# レビューリスト
 @csrf_protect
 def review_list(request):
     if request.method == 'GET':
@@ -115,7 +114,7 @@ def review_list(request):
         return JsonResponse({'review_list': review_dict})
 
 
-# 리뷰 정보
+# レビュー情報
 @csrf_protect
 def review_read(request):
     if request.method == 'GET':
@@ -130,7 +129,7 @@ def review_read(request):
         return JsonResponse({'review': review_arr})
 
 
-# 리뷰 등록
+# レビュー登録
 @csrf_protect
 def review_create(request):
     if request.method == 'POST':
@@ -149,7 +148,7 @@ def review_create(request):
         return JsonResponse({'result': 'ok'})
 
 
-# 리뷰 수정
+# レビュー修正
 @csrf_protect
 def review_update(request):
     if request.method == 'POST':
@@ -163,7 +162,7 @@ def review_update(request):
         return JsonResponse({'result': 'ok'})
 
 
-# 리뷰 삭제
+# レビュー削除
 @csrf_protect
 def review_delete(request):
     if request.method == 'POST':
@@ -173,7 +172,7 @@ def review_delete(request):
         return JsonResponse({'result': 'ok'})
 
 
-# 문의 목록
+# お問い合わせリスト
 @csrf_protect
 def inquiry_list(request):
     if request.method == 'GET':
@@ -199,7 +198,7 @@ def inquiry_list(request):
         return JsonResponse({'inquiry_list': inquiry_dict})
 
 
-# 문의 정보
+# お問い合わせ情報
 @csrf_protect
 def inquiry_read(request):
     if request.method == 'GET':
@@ -213,7 +212,7 @@ def inquiry_read(request):
         return JsonResponse({'inquiry': inquiry_arr})
 
 
-# 문의 등록
+# お問い合わせ登録
 @csrf_protect
 def inquiry_create(request):
     if request.method == 'POST':
@@ -230,7 +229,7 @@ def inquiry_create(request):
         return JsonResponse({'result': 'ok'})
 
 
-# 문의 수정
+# お問い合わせ修正
 @csrf_protect
 def inquiry_update(request):
     if request.method == 'POST':
@@ -242,7 +241,7 @@ def inquiry_update(request):
         return JsonResponse({'result': 'ok'})
 
 
-# 문의 삭제
+# お問い合わせ削除
 @csrf_protect
 def inquiry_delete(request):
     if request.method == 'POST':
@@ -255,7 +254,7 @@ def inquiry_delete(request):
 
 
 """
-# 문의 등록
+# お問い合わせ登録
 
 def inquiry_page(request, pk):
     product = Product.objects.get(id=pk)
@@ -334,7 +333,7 @@ def inquiry_delete(request):
         return JsonResponse({'result': 'ok'})
 """
 
-# 좋아요 등록
+# いいね　登録
 def like_page(request, pk):
     product = Product.objects.get(id=pk)
     review_form = ReviewForm
@@ -346,7 +345,7 @@ def like_page(request, pk):
     return redirect('shop:shop_detail', pk)
 
 
-# 좋아요 취소
+# いいね　キャンセル
 def unlike_page(request, pk):
     product = Product.objects.get(id=pk)
     review_form = ReviewForm
@@ -358,10 +357,10 @@ def unlike_page(request, pk):
     return redirect('shop:shop_detail', pk)
 
 
-# 카테고리 기능
+#　カテゴリー
 def category_page(request, slug):
     if slug == 'no_category':
-        category = '미분류'
+        category = 'その他'
         shop_list = Product.objects.filter(category=None).order_by('-created_at')
         page = request.GET.get('page', 1)
         paginator = Paginator(shop_list, 6)
@@ -388,10 +387,10 @@ def category_page(request, slug):
     )
 
 
-# 브랜드 기능
+# ブランド
 def brand_page(request, slug):
     if slug == 'no_brand':
-        brand = 'NoBrand'
+        brand = '無印良品'
         shop_list = Product.objects.filter(brand=None).order_by('-created_at')
         page = request.GET.get('page', 1)
         paginator = Paginator(shop_list, 6)
@@ -419,7 +418,7 @@ def brand_page(request, slug):
     )
 
 
-# 장바구니 리스트
+# カート
 def cart_list(request):
     cart_list = Cart.objects.filter(user=request.user).order_by('-created_at')
 
@@ -431,14 +430,15 @@ def cart_list(request):
     total_price = 0
     for each_total in cart_list:
         total_price += each_total.product.price * each_total.product_qty
-    sale = int(total_price * 0.15)
+    sale_price = int(total_price * 0.15)
     final_price = int(total_price * 0.85)
+    
     return render(request,
                   'shop/cart_list_jp.html',
                   {
                       'cart_list': object_list,
                       'total_cart': total_price,
-                      'sale_price': sale,
+                      'sale_price': sale_price,
                       'cart_sum': final_price,
                       'cart_count': cart_select,
                       'current_page': 'my',
@@ -446,13 +446,13 @@ def cart_list(request):
                   )
 
 
-# 장바구니 추가
+# カートに商品追加
 def add_cart(request, pk):
     if request.method == 'POST':
         product = Product.objects.get(id=pk)
         product_qty_one = int(request.POST['quantity'])
         if Cart.objects.filter(product=product, user=request.user):
-            messages.warning(request, '이미 장바구니에 있는 상품입니다.')
+            messages.warning(request, 'すでにカートにある商品です。')
             return redirect('/shop/' + str(pk))
         else:
             Cart.objects.create(product=product, user=request.user, product_qty=product_qty_one)
@@ -463,7 +463,7 @@ def add_cart(request, pk):
       
 
 '''
-# 장바구니 품목에서 삭제
+# カートの商品削除
 def remove_cart(request, pk):
     Cart.objects.filter(id=pk).delete()
     cart_list = Cart.objects.filter(user=request.user).order_by('-created_at')
@@ -490,8 +490,8 @@ def remove_cart(request, pk):
     )
     
     
-### Ajax 적용X
-# 장바구니 페이지 + 버튼 클릭시
+### Ajax 適用X
+# カートプラスボタンクリック
 def cart_plus_btn(request, pk):
     cart = Cart.objects.get(id=pk, user=request.user)
     cart.product_qty += 1
@@ -501,7 +501,7 @@ def cart_plus_btn(request, pk):
                          'product_qty': cart.product_qty,
                          })
 
-# 장바구니 페이지 - 버튼 클릭시
+#  カートマイナスボタンクリック
 def cart_minus_btn(request, pk):
     cart = Cart.objects.get(id=pk, user=request.user)
     if cart.product_qty > 1:
@@ -510,7 +510,7 @@ def cart_minus_btn(request, pk):
     return redirect('/shop/cart_list/')
 '''
 
-#Ajax 장바구니 plusBtn
+#Ajax カートプラスボタンクリック
 def plus_cart(request):
     if request.method == 'POST':
         prod_id = int(request.POST.get('product_id'))
@@ -534,7 +534,7 @@ def plus_cart(request):
                                  })
     return redirect('/')
 
-#Ajax 장바구니 minusBtn
+#Ajax カートマイナスボタンクリック
 def minus_cart(request):
     if request.method == 'POST':
         prod_id = int(request.POST.get('product_id'))
@@ -558,19 +558,19 @@ def minus_cart(request):
                                  })
     return redirect('/')
 
-#Ajax 장바구니 removeBtn
+#Ajax 削除ボタン
 def remove_cart(request):
     if request.method == 'POST':
         prod_id = int(request.POST.get('product_id'))
         if(Cart.objects.filter(user=request.user, product_id=prod_id)):
             cart_item = Cart.objects.get(product_id=prod_id, user=request.user)
             cart_item.delete()
-            messages.info(request, '장바구니 목록에서 제거됬습니다.')
+            messages.info(request, 'カートリストから削除されました。')
             return JsonResponse({'result': 'success'})
     return redirect('/')
             
 
-# 좋아요 상품 리스트
+# お気に入りリスト
 def wish_list(request):
     my_wish = Like.objects.filter(user=request.user).order_by('-pk')
     page = request.GET.get('page', 1)

@@ -4,8 +4,8 @@ from .models import User
 
 
 class UserCreationForm(forms.ModelForm):
-    password1 = forms.CharField(label='비밀번호', widget=forms.PasswordInput)
-    password2 = forms.CharField(label='비밀번호 확인', widget=forms.PasswordInput)
+    password1 = forms.CharField(label='パスワード', widget=forms.PasswordInput)
+    password2 = forms.CharField(label='パスワード確認', widget=forms.PasswordInput)
 
     class Meta:
         model = User
@@ -15,7 +15,7 @@ class UserCreationForm(forms.ModelForm):
         password1 = self.cleaned_data.get("password1")
         password2 = self.cleaned_data.get("password2")
         if password1 and password2 and password1 != password2:
-            raise forms.ValidationError("비밀번호가 일치하지 않습니다.")
+            raise forms.ValidationError("パスワードが一致しません。")
         return password2
 
     def save(self, commit=True):
@@ -28,8 +28,8 @@ class UserCreationForm(forms.ModelForm):
 
 class UserChangeForm(forms.ModelForm):
     password = ReadOnlyPasswordHashField(
-        label="비밀번호",
-        help_text = ("<a href='../password/'>[비밀번호 변경]</a>")
+        label="パスワード",
+        help_text = ("<a href='../password/'>[パスワード変更]</a>")
     )
 
     class Meta:

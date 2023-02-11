@@ -1,6 +1,6 @@
 # LUCY
 Fashion Mall
-## language
+## Language
 Html, CSS, Javascript, Django
-## sever
+## Sever
 AWS

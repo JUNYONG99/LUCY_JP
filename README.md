@@ -1,4 +1,4 @@
-## Project
+# LUCY
 Fashion Mall
 ## language
 Html, CSS, Javascript, Django

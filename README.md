@@ -1,5 +1,8 @@
 # Project
 
+## language
+Html, CSS, Javascript, Django, Aws
+
 ## 설정
 
 ### 일본어 번역

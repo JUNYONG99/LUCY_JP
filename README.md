@@ -1,5 +1,11 @@
 # LUCY
 Fashion Mall
+<br>
+オンラインファッションストアー
+<br>
+
+![image](https://user-images.githubusercontent.com/118879439/223017637-f9170497-effe-4127-bbd5-c1f386ef5ce2.png)
+<br>
 
 <h3>• Collaborators</h3>
 <table>
@@ -12,6 +18,8 @@ Fashion Mall
 </table>
 
 ## Language
-Html, CSS, Javascript, Python, Django
-## Sever
-AWS, Linux
+Html・CSS・Javascript・Python・Django
+## Server
+AWS・Linux
+## Demo
+http://3.34.214.117/

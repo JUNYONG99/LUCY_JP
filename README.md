@@ -1,7 +1,6 @@
 # LUCY
 Fashion Mall
-<br>
-オンラインファッションストアー
+
 <br>
 
 ![image](https://user-images.githubusercontent.com/118879439/223017637-f9170497-effe-4127-bbd5-c1f386ef5ce2.png)

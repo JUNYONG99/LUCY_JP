@@ -17,7 +17,7 @@ Fashion Mall
 </table>
 
 ## Language
-Html・CSS・Javascript・Python・Django
+Html・CSS・Javascript・jQuery・Python・Django FrameWork
 ## Server
 AWS・Linux
 ## Demo

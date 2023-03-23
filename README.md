@@ -3,7 +3,8 @@ Fashion Mall
 
 <br>
 
-![image](https://user-images.githubusercontent.com/118879439/223017637-f9170497-effe-4127-bbd5-c1f386ef5ce2.png)
+![image](https://user-images.githubusercontent.com/118879439/227266648-7e3fd953-a9ca-4c32-b145-c4e762fe9c99.png)
+
 <br>
 
 <h3>• Collaborators</h3>
